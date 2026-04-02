@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>유리 망상증 — 쇼츠 대본 패키지</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0a0e1a 0%, #131929 50%, #0d1117 100%);
+  color: #e2e8f0;
+  font-family: 'Noto Sans KR', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { animation: fadeUp 0.4s ease-out both; }
+
+.wrap { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+
+/* Tags */
+.tag {
+  display: inline-block; padding: 4px 12px; border-radius: 20px;
+  font-size: 12px; font-weight: 500; background: rgba(59,130,246,0.15);
+  color: #93c5fd; border: 1px solid rgba(59,130,246,0.25);
+  cursor: default; transition: all 0.2s;
+}
+.tag-purple { background: rgba(139,92,246,0.15); color: #c4b5fd; border-color: rgba(139,92,246,0.25); }
+.tag-green { background: rgba(16,185,129,0.15); color: #6ee7b7; border-color: rgba(16,185,129,0.25); }
+.tag-click { cursor: pointer; }
+.tag-click:hover { filter: brightness(1.3); }
+
+/* Tabs */
+.tabs { display: flex; gap: 6px; overflow-x: auto; padding: 20px 0 4px; }
+.tab-btn {
+  padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;
+  font-size: 13px; font-weight: 500; transition: all 0.2s;
+  font-family: inherit; display: flex; align-items: center; gap: 6px; white-space: nowrap;
+  background: rgba(255,255,255,0.05); color: #94a3b8;
+}
+.tab-btn:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
+.tab-btn.active { background: #3B82F6; color: white; box-shadow: 0 0 20px rgba(59,130,246,0.3); }
+
+/* Cards */
+.card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 20px; transition: all 0.2s;
+}
+.card:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+
+/* Scene dots */
+.scene-dots { display: flex; justify-content: center; gap: 12px; margin-bottom: 16px; }
+.scene-dot {
+  width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  font-size: 14px; font-weight: 700; transition: all 0.25s;
+  font-family: 'Space Mono', monospace; background: transparent;
+}
+.scene-dot.active { box-shadow: 0 0 16px currentColor; transform: scale(1.1); }
+.scene-dot:not(.active):hover { border-color: rgba(255,255,255,0.4); transform: scale(1.05); }
+
+/* Buttons */
+.copy-btn {
+  padding: 4px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px;
+  background: rgba(255,255,255,0.05); color: #94a3b8; cursor: pointer;
+  font-size: 11px; transition: all 0.2s; font-family: inherit;
+}
+.copy-btn:hover { background: rgba(59,130,246,0.2); border-color: #3B82F6; color: #93c5fd; }
+
+.nav-btn { padding: 8px 16px; font-size: 13px; }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* Prompt box */
+.prompt-box {
+  background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #94a3b8;
+  line-height: 1.6; font-family: 'Space Mono', monospace; word-break: break-all;
+  margin-top: 8px; display: none;
+}
+.prompt-box.show { display: block; }
+
+/* Timeline */
+.timeline-bar {
+  height: 3px; border-radius: 2px; position: relative; overflow: hidden;
+  background: rgba(255,255,255,0.08);
+}
+.timeline-fill {
+  position: absolute; top: 0; left: 0; height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, #3B82F6, #EF4444, #8B5CF6, #F59E0B, #10B981);
+  width: 100%; opacity: 0.8;
+}
+
+/* Upload row */
+.upload-row {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+  background: rgba(255,255,255,0.03); border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Thumb preview */
+.thumb-preview {
+  height: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a15 70%);
+  position: relative; border-radius: 12px 12px 0 0; overflow: hidden;
+}
+.thumb-grid {
+  position: absolute; inset: 0; opacity: 0.3;
+  background-image: repeating-linear-gradient(rgba(255,255,255,0.03) 0 1px, transparent 1px 60px),
+                     repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 60px);
+}
+
+/* Roadmap */
+.roadmap { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.roadmap-item {
+  padding: 8px 14px; border-radius: 8px; text-align: center;
+}
+
+/* Tab content */
+.tab-content { display: none; padding: 20px 0 40px; }
+.tab-content.active { display: block; }
+
+/* Detail item */
+.detail-item { padding: 16px; }
+.detail-label { font-size: 11px; color: #64748b; margin-bottom: 6px; font-weight: 600; }
+.detail-value { font-size: 14px; line-height: 1.7; color: #e2e8f0; }
+
+/* Section title */
+.section-title { font-size: 15px; font-weight: 700; color: #93c5fd; margin-bottom: 14px; }
+
+/* Mono */
+.mono { font-family: 'Space Mono', monospace; }
+
+/* Responsive */
+@media (max-width: 480px) {
+  .wrap { padding: 0 16px; }
+  .thumb-preview { height: 240px; }
+  .upload-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+}
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: #3B82F6; color: white; padding: 8px 20px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; opacity: 0; transition: all 0.3s;
+  pointer-events: none; z-index: 100; box-shadow: 0 4px 20px rgba(59,130,246,0.4);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast">✓ 클립보드에 복사되었습니다</div>
+
+<!-- Header -->
+<div class="wrap" style="padding-top: 28px;">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+    <span class="mono" style="font-size:10px;letter-spacing:3px;color:#64748b;text-transform:uppercase;">Public Domain Shorts</span>
+    <span style="font-size:10px;color:#334155;">●</span>
+    <span class="mono" style="font-size:10px;letter-spacing:2px;color:#475569;">#01</span>
+  </div>
+  <h1 style="font-size:28px;font-weight:900;letter-spacing:-0.5px;margin-bottom:4px;background:linear-gradient(135deg,#e2e8f0,#93c5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">유리 망상증</h1>
+  <p class="mono" style="font-size:13px;color:#64748b;font-style:italic;">The Glass Delusion</p>
+  <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;">
+    <span class="tag">시리즈: #1 기묘한 역사</span>
+    <span class="tag tag-purple">40초</span>
+    <span class="tag tag-green">한국어</span>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="wrap">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="script">📝 대본</button>
+    <button class="tab-btn" data-tab="storyboard">🎬 스토리보드</button>
+    <button class="tab-btn" data-tab="upload">📤 업로드 정보</button>
+    <button class="tab-btn" data-tab="thumbnail">🖼️ 썸네일</button>
+    <button class="tab-btn" data-tab="auto">⚙️ 자동화</button>
+  </div>
+</div>
+
+<!-- ═══ SCRIPT TAB ═══ -->
+<div class="wrap">
+<div class="tab-content active" id="tab-script">
+<div class="fade-up" style="display:flex;flex-direction:column;gap:16px;">
+
+  <!-- Timeline -->
+  <div class="card" style="padding:16px;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+      <div style="text-align:center;flex:1;"><div class="mono" style="font-size:10px;color:#64748b;margin-bottom:4px;">0:00</div><div style="font-size:16px;">🎣</div><div style="font-size:9px;color:#94a3b8;margin-top:2px;">후크</div></div>
+      <div style="text-align:center;flex:1;"><div class="mono" style="font-size:10px;color:#64748b;margin-bottom:4px;">0:03</div><div style="font-size:16px;">🔥</div><div style="font-size:9px;color:#94a3b8;margin-top:2px;">배경</div></div>
+      <div style="text-align:center;flex:1;"><div class="mono" style="font-size:10px;color:#64748b;margin-bottom:4px;">0:12</div><div style="font-size:16px;">👑</div><div style="font-size:9px;color:#94a3b8;margin-top:2px;">전개</div></div>
+      <div style="text-align:center;flex:1;"><div class="mono" style="font-size:10px;color:#64748b;margin-bottom:4px;">0:22</div><div style="font-size:16px;">🗺️</div><div style="font-size:9px;color:#94a3b8;margin-top:2px;">확장</div></div>
+      <div style="text-align:center;flex:1;"><div class="mono" style="font-size:10px;color:#64748b;margin-bottom:4px;">0:30</div><div style="font-size:16px;">🔮</div><div style="font-size:9px;color:#94a3b8;margin-top:2px;">반전</div></div>
+    </div>
+    <div class="timeline-bar"><div class="timeline-fill"></div></div>
+  </div>
+
+  <!-- Scene cards -->
+  <div class="card" style="border-left:3px solid #3B82F6;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <span style="font-size:20px;">🎣</span>
+      <div><span style="font-size:13px;font-weight:700;color:#3B82F6;">후크</span><span class="mono" style="font-size:11px;color:#64748b;margin-left:8px;">0:00 ~ 0:03</span></div>
+    </div>
+    <p style="font-size:15px;line-height:1.75;color:#e2e8f0;">600년 전, 자기 몸이 유리라고 믿은 왕이 있었습니다.</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid #EF4444;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <span style="font-size:20px;">🔥</span>
+      <div><span style="font-size:13px;font-weight:700;color:#EF4444;">배경</span><span class="mono" style="font-size:11px;color:#64748b;margin-left:8px;">0:03 ~ 0:12</span></div>
+    </div>
+    <p style="font-size:15px;line-height:1.75;color:#e2e8f0;">1393년, 프랑스 왕 샤를 6세. 궁전 가장무도회에서 불꽃이 튀어 동료 귀족 4명이 눈앞에서 불에 타 죽습니다.</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid #8B5CF6;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <span style="font-size:20px;">👑</span>
+      <div><span style="font-size:13px;font-weight:700;color:#8B5CF6;">전개</span><span class="mono" style="font-size:11px;color:#64748b;margin-left:8px;">0:12 ~ 0:22</span></div>
+    </div>
+    <p style="font-size:15px;line-height:1.75;color:#e2e8f0;">겨우 살아남은 왕은 이후 자신의 몸이 유리라고 확신하기 시작합니다. 옷 안에 철봉을 꿰매고, 아무도 가까이 오지 못하게 했습니다.</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid #F59E0B;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <span style="font-size:20px;">🗺️</span>
+      <div><span style="font-size:13px;font-weight:700;color:#F59E0B;">확장</span><span class="mono" style="font-size:11px;color:#64748b;margin-left:8px;">0:22 ~ 0:30</span></div>
+    </div>
+    <p style="font-size:15px;line-height:1.75;color:#e2e8f0;">그런데 이 왕만이 아니었습니다. 엉덩이가 유리창이라 앉지 못하는 남자, 유리 피아노를 삼켰다고 믿는 공주까지. 15세기부터 17세기까지 유럽 전역에서 같은 증상이 퍼집니다.</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid #10B981;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <span style="font-size:20px;">🔮</span>
+      <div><span style="font-size:13px;font-weight:700;color:#10B981;">반전+마무리</span><span class="mono" style="font-size:11px;color:#64748b;margin-left:8px;">0:30 ~ 0:40</span></div>
+    </div>
+    <p style="font-size:15px;line-height:1.75;color:#e2e8f0;">원인은 유리 그 자체였습니다. 당시 거의 투명한 유리가 처음 등장하면서, 인간의 무의식이 그 시대 가장 경이로운 물질에 공포를 투영한 것입니다. 만약 지금이라면, 우리는 무엇을 두려워할까요?</p>
+  </div>
+
+  <div style="text-align:center;padding:8px 0;">
+    <span style="font-size:11px;color:#475569;">예상 분량: 약 250자 / 40초 · 톤: 격식 있는 존댓말 (~합니다)</span>
+  </div>
+</div>
+</div>
+
+<!-- ═══ STORYBOARD TAB ═══ -->
+<div class="tab-content" id="tab-storyboard">
+<div class="fade-up" style="display:flex;flex-direction:column;gap:16px;">
+  <div class="scene-dots" id="sceneDots"></div>
+  <div id="sceneDetail"></div>
+  <div style="display:flex;justify-content:space-between;margin-top:8px;">
+    <button class="copy-btn nav-btn" id="prevBtn" onclick="changeScene(-1)">← 이전 씬</button>
+    <button class="copy-btn nav-btn" id="nextBtn" onclick="changeScene(1)">다음 씬 →</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══ UPLOAD TAB ═══ -->
+<div class="tab-content" id="tab-upload">
+<div class="fade-up" style="display:flex;flex-direction:column;gap:16px;">
+
+  <div class="card">
+    <h3 class="section-title">📌 제목 후보 (3안)</h3>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="upload-row">
+        <span style="font-size:11px;color:#64748b;font-weight:600;min-width:80px;">호기심 자극형</span>
+        <span style="font-size:14px;color:#e2e8f0;flex:1;">자기 몸이 유리라고 믿은 왕의 비극</span>
+        <button class="copy-btn" onclick="copyText('자기 몸이 유리라고 믿은 왕의 비극')">복사</button>
+      </div>
+      <div class="upload-row">
+        <span style="font-size:11px;color:#64748b;font-weight:600;min-width:80px;">숫자/리스트형</span>
+        <span style="font-size:14px;color:#e2e8f0;flex:1;">600년 전 유럽을 덮친 기묘한 정신병</span>
+        <button class="copy-btn" onclick="copyText('600년 전 유럽을 덮친 기묘한 정신병')">복사</button>
+      </div>
+      <div class="upload-row">
+        <span style="font-size:11px;color:#64748b;font-weight:600;min-width:80px;">도발/반전형</span>
+        <span style="font-size:14px;color:#e2e8f0;flex:1;">이 왕은 왜 자기 몸이 깨질까 봐 두려워했을까?</span>
+        <button class="copy-btn" onclick="copyText('이 왕은 왜 자기 몸이 깨질까 봐 두려워했을까?')">복사</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 class="section-title" style="margin-bottom:0;">📝 설명문</h3>
+      <button class="copy-btn" onclick="copyText(descText)">전체 복사</button>
+    </div>
+    <div style="font-size:13px;line-height:1.8;color:#cbd5e1;">
+      <p>600년 전, 프랑스 왕 샤를 6세는 자신의 몸이 유리로 만들어졌다고 믿었습니다.</p>
+      <p>그리고 그는 혼자가 아니었습니다 — 유리 망상증의 놀라운 역사.</p>
+      <br>
+      <p>🔔 매일 새로운 이야기가 올라옵니다. 구독과 좋아요로 응원해 주세요!</p>
+      <p>여러분은 지금 시대라면 어떤 물질을 두려워할 것 같나요? 댓글로 알려주세요!</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 class="section-title" style="margin-bottom:0;"># 해시태그</h3>
+      <button class="copy-btn" onclick="copyText(hashText)">전체 복사</button>
+    </div>
+    <div id="hashtagArea" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══ THUMBNAIL TAB ═══ -->
+<div class="tab-content" id="tab-thumbnail">
+<div class="fade-up" style="display:flex;flex-direction:column;gap:16px;">
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div class="thumb-preview">
+      <div class="thumb-grid"></div>
+      <div style="font-size:48px;margin-bottom:8px;filter:drop-shadow(0 0 20px rgba(59,130,246,0.4));position:relative;z-index:1;">👑</div>
+      <div style="font-size:36px;font-weight:900;color:white;text-shadow:0 0 30px rgba(59,130,246,0.5),0 2px 10px rgba(0,0,0,0.8);position:relative;z-index:1;letter-spacing:2px;">나는 유리다</div>
+      <div style="font-size:14px;color:#94a3b8;margin-top:8px;position:relative;z-index:1;letter-spacing:1px;">600년 전 왕의 고백</div>
+      <div class="mono" style="position:absolute;bottom:12px;right:12px;font-size:10px;color:#475569;">9:16 PREVIEW</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="section-title">💡 콘셉트</h3>
+    <p style="font-size:13px;line-height:1.7;color:#cbd5e1;">중세 왕관 위에 금이 간 유리 균열이 퍼지는 이미지. 어두운 배경에 깨지는 유리 파편이 튀는 극적인 장면으로, "불안과 공포"를 시각적으로 전달.</p>
+  </div>
+
+  <div class="card">
+    <h3 class="section-title">텍스트 오버레이</h3>
+    <div style="display:flex;gap:12px;margin-top:8px;">
+      <div style="flex:1;padding:10px 14px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+        <div style="font-size:10px;color:#64748b;margin-bottom:4px;">메인</div>
+        <div style="font-size:18px;font-weight:900;color:#e2e8f0;">나는 유리다</div>
+      </div>
+      <div style="flex:1;padding:10px 14px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+        <div style="font-size:10px;color:#64748b;margin-bottom:4px;">서브</div>
+        <div style="font-size:14px;color:#94a3b8;">600년 전 왕의 고백</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <h3 class="section-title" style="margin-bottom:0;">🎨 이미지 프롬프트</h3>
+      <button class="copy-btn" id="thumbPromptCopy">복사</button>
+    </div>
+    <div class="prompt-box show" id="thumbPrompt"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══ AUTOMATION TAB ═══ -->
+<div class="tab-content" id="tab-auto">
+<div class="fade-up" style="display:flex;flex-direction:column;gap:16px;">
+
+  <div style="text-align:center;padding:8px 0;">
+    <span style="font-size:12px;color:#64748b;">스토리보드의 이미지 프롬프트를 활용한 영상 자동 생성 파이프라인</span>
+  </div>
+
+  <div class="card" style="border-left:3px solid #3B82F6;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <span class="mono" style="font-size:11px;font-weight:700;color:#3B82F6;">Step 1</span>
+      <span style="font-size:15px;font-weight:700;color:#e2e8f0;">이미지 자동 생성</span>
+    </div>
+    <p style="font-size:13px;color:#cbd5e1;margin-bottom:8px;line-height:1.6;">각 씬의 영어 이미지 프롬프트를 AI 이미지 생성 도구의 API에 전달</p>
+    <div style="font-size:11px;color:#64748b;">추천 도구: Midjourney API, DALL-E 3, Flux, Google Imagen</div>
+  </div>
+
+  <div class="card" style="border-left:3px solid #8B5CF6;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <span class="mono" style="font-size:11px;font-weight:700;color:#8B5CF6;">Step 2</span>
+      <span style="font-size:15px;font-weight:700;color:#e2e8f0;">TTS 나레이션 생성</span>
+    </div>
+    <p style="font-size:13px;color:#cbd5e1;margin-bottom:8px;line-height:1.6;">대본 텍스트를 TTS API에 전달하여 음성 파일(.mp3) 생성</p>
+    <div style="font-size:11px;color:#64748b;">추천 도구: ElevenLabs, OpenAI TTS, CLOVA Voice</div>
+  </div>
+
+  <div class="card" style="border-left:3px solid #10B981;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <span class="mono" style="font-size:11px;font-weight:700;color:#10B981;">Step 3</span>
+      <span style="font-size:15px;font-weight:700;color:#e2e8f0;">영상 자동 조립</span>
+    </div>
+    <p style="font-size:13px;color:#cbd5e1;margin-bottom:8px;line-height:1.6;">이미지 + 나레이션 + 자막을 하나의 영상으로 합침</p>
+    <div style="font-size:11px;color:#64748b;">추천 도구: CapCut → FFmpeg → Remotion</div>
+  </div>
+
+  <!-- Roadmap -->
+  <div class="card" style="text-align:center;">
+    <h3 style="font-size:14px;font-weight:700;color:#93c5fd;margin-bottom:14px;">추천 자동화 로드맵</h3>
+    <div class="roadmap">
+      <div class="roadmap-item" style="background:#F59E0B22;border:1px solid #F59E0B44;">
+        <div style="font-size:13px;font-weight:700;color:#F59E0B;">CapCut 수동</div>
+        <div style="font-size:10px;color:#94a3b8;">감 잡기</div>
+      </div>
+      <span style="color:#475569;font-size:16px;">→</span>
+      <div class="roadmap-item" style="background:#8B5CF622;border:1px solid #8B5CF644;">
+        <div style="font-size:13px;font-weight:700;color:#8B5CF6;">FFmpeg</div>
+        <div style="font-size:10px;color:#94a3b8;">프로토타입</div>
+      </div>
+      <span style="color:#475569;font-size:16px;">→</span>
+      <div class="roadmap-item" style="background:#10B98122;border:1px solid #10B98144;">
+        <div style="font-size:13px;font-weight:700;color:#10B981;">Remotion</div>
+        <div style="font-size:10px;color:#94a3b8;">완전 자동화</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch copy -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 style="font-size:14px;font-weight:700;color:#93c5fd;">전체 프롬프트 일괄 복사</h3>
+      <button class="copy-btn" style="padding:6px 14px;" onclick="copyAllPrompts()">5개 씬 전체 복사</button>
+    </div>
+    <div style="font-size:11px;color:#475569;">이미지 생성 API에 바로 사용할 수 있는 전체 프롬프트를 클립보드에 복사합니다.</div>
+  </div>
+
+</div>
+</div>
+</div><!-- /wrap -->
+
+<script>
+// ── Data ──
+const SCENES = [
+  { num:1, label:"후크", time:"0:00 ~ 0:03", icon:"🎣", color:"#3B82F6",
+    narration:"600년 전, 자기 몸이 유리라고 믿은 왕이 있었습니다.",
+    screen:"중세 유럽 왕관 클로즈업 → 금이 간 유리 조각으로 변하며 깨지는 애니메이션",
+    subtitle:"유리라고 믿은 왕", transition:"빠른 줌 인 (Zoom In)",
+    prompt:"A medieval European king's golden crown shattering into translucent glass pieces, dark dramatic lighting, cinematic close-up, moody atmosphere, vertical 9:16 composition, hyper-realistic, rich color palette, space for text overlay at top --ar 9:16" },
+  { num:2, label:"배경", time:"0:03 ~ 0:12", icon:"🔥", color:"#EF4444",
+    narration:"1393년, 프랑스 왕 샤를 6세. 궁전 가장무도회에서 불꽃이 튀어 동료 귀족 4명이 눈앞에서 불에 타 죽습니다.",
+    screen:"중세 궁전 무도회 장면 → 불꽃이 튀기며 혼란에 빠진 귀족들",
+    subtitle:"1393년 / 불타는 가장무도회", transition:"컷 체인지 (Cut)",
+    prompt:"A medieval French palace masquerade ball engulfed in flames, nobles in animal costumes on fire, chaotic scene with dramatic fire lighting, oil painting style with dark rich tones, vertical 9:16 composition, space for text at bottom --ar 9:16" },
+  { num:3, label:"전개", time:"0:12 ~ 0:22", icon:"👑", color:"#8B5CF6",
+    narration:"겨우 살아남은 왕은 이후 자신의 몸이 유리라고 확신하기 시작합니다. 옷 안에 철봉을 꿰매고, 아무도 가까이 오지 못하게 했습니다.",
+    screen:"어두운 궁전 방에서 철봉이 꿰맨 옷을 입은 채 웅크린 왕의 실루엣",
+    subtitle:"옷 안에 철봉 / 접근 금지", transition:"느린 줌 인 (Slow Zoom)",
+    prompt:"A solitary medieval French king sitting alone in a dark gothic chamber, wearing robes reinforced with iron bars visible through fabric, fearful expression, dramatic chiaroscuro lighting, oil painting style, vertical 9:16, space for text overlay --ar 9:16" },
+  { num:4, label:"확장", time:"0:22 ~ 0:30", icon:"🗺️", color:"#F59E0B",
+    narration:"그런데 이 왕만이 아니었습니다. 엉덩이가 유리창이라 앉지 못하는 남자, 유리 피아노를 삼켰다고 믿는 공주까지. 15세기부터 17세기까지 유럽 전역에서 같은 증상이 퍼집니다.",
+    screen:"유럽 지도 위에 유리 인간 실루엣이 여러 개 나타나는 애니메이션",
+    subtitle:"유럽 전역 / 15~17세기", transition:"컷 체인지 (Cut)",
+    prompt:"An antique map of medieval Europe with translucent glass human silhouettes appearing across different regions, ethereal glow, dark parchment background, vintage cartography style, vertical 9:16 composition, mystical atmosphere --ar 9:16" },
+  { num:5, label:"반전+마무리", time:"0:30 ~ 0:40", icon:"🔮", color:"#10B981",
+    narration:"원인은 유리 그 자체였습니다. 당시 거의 투명한 유리가 처음 등장하면서, 인간의 무의식이 그 시대 가장 경이로운 물질에 공포를 투영한 것입니다. 만약 지금이라면, 우리는 무엇을 두려워할까요?",
+    screen:"베네치아 유리공예 → 현대 AI/로봇 이미지로 전환되며 질문 텍스트 표시",
+    subtitle:"만약 지금이라면?", transition:"페이드 아웃 (Fade Out)",
+    prompt:"Split composition: left side shows beautiful Venetian glass goblets and lenses from the Renaissance glowing with warm light, right side transitions into modern AI neural network visualization with cold blue light, dramatic contrast, vertical 9:16 composition, cinematic, thought-provoking mood --ar 9:16" }
+];
+
+const HASHTAGS = ["#유리망상증","#샤를6세","#중세유럽","#기묘한역사","#정신의학역사","#몰랐던사실","#역사이야기","#Shorts"];
+const descText = "600년 전, 프랑스 왕 샤를 6세는 자신의 몸이 유리로 만들어졌다고 믿었습니다.\n그리고 그는 혼자가 아니었습니다 — 유리 망상증의 놀라운 역사.\n\n🔔 매일 새로운 이야기가 올라옵니다. 구독과 좋아요로 응원해 주세요!\n여러분은 지금 시대라면 어떤 물질을 두려워할 것 같나요? 댓글로 알려주세요!";
+const hashText = HASHTAGS.join(" ");
+const thumbPrompt = "A medieval golden crown with cracks spreading across its surface like shattering glass, glass fragments flying outward with dramatic light rays, dark moody background with deep shadows, cinematic dramatic lighting, hyper-realistic detail, vertical 9:16 composition, space for large bold text overlay at center --ar 9:16";
+
+let currentScene = 0;
+let promptVisible = {};
+
+// ── Toast ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg || '✓ 클립보드에 복사되었습니다';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+// ── Copy ──
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => showToast()).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast();
+  });
+}
+
+function copyAllPrompts() {
+  const all = SCENES.map(s => `[Scene ${s.num}]\n${s.prompt}`).join("\n\n");
+  copyText(all);
+}
+
+// ── Tabs ──
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── Storyboard ──
+function renderSceneDots() {
+  const container = document.getElementById('sceneDots');
+  container.innerHTML = '';
+  SCENES.forEach((s, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'scene-dot' + (i === currentScene ? ' active' : '');
+    dot.style.color = s.color;
+    dot.style.borderColor = i === currentScene ? s.color : '';
+    dot.style.background = i === currentScene ? s.color + '22' : 'transparent';
+    dot.textContent = s.num;
+    dot.onclick = () => { currentScene = i; renderScene(); };
+    container.appendChild(dot);
+  });
+}
+
+function renderScene() {
+  renderSceneDots();
+  const s = SCENES[currentScene];
+  const detail = document.getElementById('sceneDetail');
+
+  const fields = [
+    { label: "🎙️ 나레이션", value: s.narration },
+    { label: "🖥️ 화면 설명", value: s.screen },
+    { label: "💬 자막/텍스트", value: s.subtitle },
+    { label: "🔄 전환 효과", value: s.transition },
+  ];
+
+  const pid = 'prompt-' + currentScene;
+  const isOpen = promptVisible[currentScene];
+
+  detail.innerHTML = `
+    <div style="text-align:center;margin-bottom:16px;">
+      <span style="font-size:32px;">${s.icon}</span>
+      <h3 style="font-size:18px;font-weight:700;color:${s.color};margin-top:4px;">Scene ${s.num}: ${s.label}</h3>
+      <span class="mono" style="font-size:12px;color:#64748b;">${s.time}</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      ${fields.map(f => `
+        <div class="card detail-item">
+          <div class="detail-label">${f.label}</div>
+          <p class="detail-value">${f.value}</p>
+        </div>
+      `).join('')}
+      <div class="card detail-item">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span class="detail-label" style="margin-bottom:0;">🎨 이미지 프롬프트 (EN)</span>
+          <div style="display:flex;gap:6px;">
+            <button class="copy-btn" id="togglePromptBtn">${isOpen ? '접기' : '펼치기'}</button>
+            <button class="copy-btn" id="copyPromptBtn">복사</button>
+          </div>
+        </div>
+        <div class="prompt-box ${isOpen ? 'show' : ''}" id="${pid}">${s.prompt}</div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('togglePromptBtn').onclick = () => {
+    promptVisible[currentScene] = !promptVisible[currentScene];
+    renderScene();
+  };
+  document.getElementById('copyPromptBtn').onclick = () => copyText(s.prompt);
+
+  document.getElementById('prevBtn').disabled = currentScene === 0;
+  document.getElementById('nextBtn').disabled = currentScene === SCENES.length - 1;
+}
+
+function changeScene(dir) {
+  const next = currentScene + dir;
+  if (next >= 0 && next < SCENES.length) { currentScene = next; renderScene(); }
+}
+
+// ── Hashtags ──
+function renderHashtags() {
+  const area = document.getElementById('hashtagArea');
+  HASHTAGS.forEach(h => {
+    const span = document.createElement('span');
+    span.className = 'tag tag-click';
+    span.textContent = h;
+    span.onclick = () => { copyText(h); span.textContent = '✓'; setTimeout(() => span.textContent = h, 1200); };
+    area.appendChild(span);
+  });
+}
+
+// ── Thumbnail prompt ──
+document.getElementById('thumbPrompt').textContent = thumbPrompt;
+document.getElementById('thumbPromptCopy').onclick = () => copyText(thumbPrompt);
+
+// ── Init ──
+renderScene();
+renderHashtags();
+</script>
+</body>
+</html>
